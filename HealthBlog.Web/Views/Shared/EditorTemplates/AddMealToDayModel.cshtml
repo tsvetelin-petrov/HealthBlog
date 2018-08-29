@@ -1,0 +1,16 @@
+﻿@model AddMealToDayModel
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="input-group mt-4">
+	<div class="input-group-prepend">
+		<label asp-for="@Model.Id" class="input-group-text"></label>
+	</div>
+	<select asp-for="@Model.Id" class="custom-select">
+		@foreach (var meal in Model.Meals)
+		{
+			<option value="@meal.Id">@meal.Name</option>
+		}
+	</select>
+	<a asp-page="@PageConstants.MealsCreate" asp-area="" class="btn btn-primary" asp-route-redirectUrl="@Context.Request.Path">Създай ново</a>
+</div>

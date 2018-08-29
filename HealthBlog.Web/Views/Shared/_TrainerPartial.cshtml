@@ -1,0 +1,18 @@
+﻿@if (User.IsInRole(RolesConstants.Trainer))
+{
+	<li class="nav-item dropdown">
+		<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Треньор
+		</a>
+		<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+			<a class="dropdown-item"
+			   asp-area="@RolesConstants.Trainer"
+			   asp-controller="@ControllerConstants.Programs"
+			   asp-action="@ActionConstants.Index">Всички програми</a>
+			<a class="dropdown-item"
+			   asp-area="@RolesConstants.Trainer"
+			   asp-controller="@ControllerConstants.Programs"
+			   asp-action="@ActionConstants.Create">Създай програма</a>
+		</div>
+	</li>
+}

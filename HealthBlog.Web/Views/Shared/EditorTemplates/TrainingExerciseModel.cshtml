@@ -1,0 +1,20 @@
+﻿@model TrainingExerciseModel
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="input-group mt-4">
+	<div class="input-group-prepend">
+		<label asp-for="@Model.Input.ExerciseId" class="input-group-text"></label>
+	</div>
+	<select asp-for="@Model.Input.ExerciseId" class="custom-select">
+		@foreach (var exercise in Model.Exercises)
+		{
+			<option value="@exercise.Id">@exercise.Name</option>
+		}
+	</select>
+	<a asp-action="@ActionConstants.Create" asp-controller="@ControllerConstants.Exercises" asp-area="" class="btn btn-primary" asp-route-redirectUrl="@Context.Request.Path">Създай ново</a>
+</div>
+
+@Html.FormGroupFor(model => model.Input.RepetitionCount)
+
+@Html.FormGroupFor(model => model.Input.SeriesCount)

@@ -1,0 +1,12 @@
+﻿@model DayDetailsViewModel
+
+<div class="row col-12 m-0 mt-5">
+	@if (Model.IsCreatedByCurrentUser)
+	{
+		<partial name="_DayDetailsCreatedPartialView" model="Model" />
+	}
+	else
+	{
+		<partial name="_DayDetailsBoughtPartialView" model="Model" />
+	}
+</div>

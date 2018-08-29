@@ -1,0 +1,15 @@
+﻿@model ProgramDetailsViewModel
+
+<h2 class="text-lg-center mt-3">@Model.Name</h2>
+<h4 class="text-center">@Model.Type</h4>
+<br />
+<div class="text-justify"><strong>Описание:</strong> @Model.Description</div>
+
+@if (Model.IsCreatedByCurrentUser)
+{
+	@Html.DisplayFor(model => model.Days, "DaysInCreatedProgramDisplayTemplate", new { programId = Model.Id })
+}
+else
+{
+	@Html.DisplayFor(model => model.Days, "DaysInBoughtProgramDisplayTemplate", new { programId = Model.Id })
+}

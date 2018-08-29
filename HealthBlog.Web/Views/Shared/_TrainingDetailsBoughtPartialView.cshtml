@@ -1,0 +1,30 @@
+﻿@model TrainingDetailsViewModel
+
+@if (Model.Exercises.Any())
+{
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Име</th>
+				<th>Мускулна група</th>
+				<th>Серии</th>
+				<th>Повторения</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var exercise in Model.Exercises)
+			{
+				<tr>
+					<td>@exercise.Name</td>
+					<td>@exercise.TargetMuscle</td>
+					<td>@exercise.SeriesCount</td>
+					<td>@exercise.RepetitionCount</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<div>Няма упражнения към тази тренировка.</div>
+}

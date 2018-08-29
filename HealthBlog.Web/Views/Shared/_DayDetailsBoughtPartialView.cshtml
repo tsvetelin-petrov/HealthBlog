@@ -1,0 +1,42 @@
+﻿@model DayDetailsViewModel
+
+<div class="col-6">
+	<h5 class="text-center">Тренировки</h5>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Име</th>
+				<th>Тип</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var training in Model.Trainings)
+			{
+				<tr>
+					<td><a asp-action="@ActionConstants.Details" asp-controller="@ControllerConstants.Trainings" asp-area="" asp-route-id="@training.Id">@training.Name</a></td>
+					<td>@training.Type</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+<div class="col-6">
+	<h5 class="text-center">Хранения</h5>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Име</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var meal in Model.Meals)
+			{
+				<tr>
+					<td>
+						<a asp-page="@PageConstants.MealsDetails" asp-area="" asp-route-id="@meal.Id">@meal.Name</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>

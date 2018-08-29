@@ -1,0 +1,10 @@
+﻿@model int
+
+@if (User.IsInRole(RolesConstants.Trainer))
+{
+	<a asp-action="@ActionConstants.AddToProgram"
+	   asp-controller="@ControllerConstants.Days"
+	   asp-area=""
+	   asp-route-id="@Model"
+	   class="btn btn-secondary ml-1">Добави към програма</a>
+}

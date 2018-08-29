@@ -1,0 +1,16 @@
+﻿@model TrainingExerciseModel
+
+<h2 class="text-center">Добавяне упражнение към @Model.TrainingName</h2>
+
+<form method="post" asp-action="@ActionConstants.AddExercise" asp-controller="@ControllerConstants.Trainings" asp-area="" asp-route-id="@this.ViewData["id"]">
+	@Html.EditorForModel()
+
+	<div class="mt-3">
+		<input type="submit" class="btn btn-success" value="Създай" />
+		<a asp-action="@ActionConstants.Index" asp-controller="@ControllerConstants.Trainings" asp-area="" class="btn btn-light">Назад</a>
+	</div>
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

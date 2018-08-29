@@ -1,0 +1,20 @@
+﻿@model ProgramSellBindingModel
+
+<form method="post"
+	  asp-area="@RolesConstants.Trainer"
+	  asp-controller="@ControllerConstants.Programs"
+	  asp-action="@ActionConstants.Sell"
+	  asp-route-id="@Model.Id">
+
+	@Html.EditorForModel()
+
+
+	<div class="mt-3">
+		<input type="submit" class="btn btn-success" value="Продай" />
+		<a asp-action="@ActionConstants.Index" asp-controller="@ControllerConstants.Programs" asp-area="@RolesConstants.Trainer" class="btn btn-light">Назад</a>
+	</div>
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject UserManager<User> userManager
+@{
+	var user = await userManager.GetUserAsync(this.User);
+	bool canBecomeTrainer = !this.User.IsInRole(RolesConstants.Trainer) && user.CertificateUploadTimes < 3;
+}
+
+@if (canBecomeTrainer)
+{
+	<li>
+		<a asp-area="@RolesConstants.Trainer" asp-page="@PageConstants.ValidateIndex" title="Manage" class="nav-link">Стани треньор</a>
+	</li>
+}

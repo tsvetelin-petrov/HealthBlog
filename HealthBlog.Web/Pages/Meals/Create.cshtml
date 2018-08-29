@@ -1,0 +1,18 @@
+﻿@page
+@model MealsCreateModel
+
+<h3 class="text-center m-3">Създай хранене</h3>
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+	@Html.EditorFor(model => model.Input);
+
+	<div class="mt-3">
+		<input type="submit" class="btn btn-success" value="Създай" />
+		<a asp-page="@PageConstants.MealsIndex" asp-area="" class="btn btn-light">Назад</a>
+	</div>
+}
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

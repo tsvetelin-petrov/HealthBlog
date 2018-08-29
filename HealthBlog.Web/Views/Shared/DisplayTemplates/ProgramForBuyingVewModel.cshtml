@@ -1,0 +1,53 @@
+﻿@model IEnumerable<ProgramForBuyingVewModel>
+@{
+	string searchTerm = string.Empty;
+}
+
+<h2 class="text-center m-3">Купи програма</h2>
+
+<form asp-area=""
+	  asp-controller="@ControllerConstants.Programs"
+	  asp-action="@ActionConstants.Search"
+	  method="get"
+	  asp-route-searchTerm="@searchTerm">
+	<div class="input-group mt-4">
+		<input asp-for="@searchTerm" placeholder="Потърси програма" class="form-control" />
+		<div class="input-group-append">
+			<button type="submit" class="btn btn-primary input-group-text"><i class="fa fa-search"></i></button>
+		</div>
+	</div>
+</form>
+
+<table class="table table-striped mt-3">
+	<thead>
+		<tr>
+			<th>Име</th>
+			<th>Тип</th>
+			<th>Брой дни</th>
+			<th>Автор</th>
+			<th>Цена</th>
+			<th>Действия</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var program in Model)
+		{
+			<tr>
+				<td>@program.Name</td>
+				<td>@program.Type</td>
+				<td>@program.DaysCount</td>
+				<td>@program.Author</td>
+				<td>@program.Price</td>
+				<td>
+					<form method="post"
+						  asp-area=""
+						  asp-controller="@ControllerConstants.Programs"
+						  asp-action="@ActionConstants.Buy"
+						  asp-route-id="@program.Id">
+						<input type="submit" value="Купи" class="btn btn-success btn-sm"/>
+					</form>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

@@ -1,0 +1,37 @@
+﻿@using HealthBlog.Common.Admins.ViewModels
+@using HealthBlog.Common.Constants
+
+@model IEnumerable<AllTrainerRequestsViewModel>
+
+<h2 class="text-center m-3">Заявки за треньори</h2>
+
+<div class="card-deck row col-12">
+	@foreach (var user in Model)
+	{
+		<div class="card col-4 p-0">
+			<img src="~/@user.CertificatePath" class="card-img-top w-100" />
+			<h4 class="card-title text-center">@user.Username</h4>
+			<div class="card-body btn-group justify-content-center">
+				<form method="post"
+					  asp-area="@RolesConstants.Administrator"
+					  asp-controller="@ControllerConstants.MakeTrainer"
+					  asp-action="@ActionConstants.Confirm"
+					  asp-route-id="@user.Id">
+
+					<button type="submit" class="btn btn-success btn-lg mr-1"><i class="fa fa-check" aria-hidden="true"></i></button>
+
+				</form>
+
+				<form method="post"
+					  asp-area="@RolesConstants.Administrator"
+					  asp-controller="@ControllerConstants.MakeTrainer"
+					  asp-action="@ActionConstants.Decline"
+					  asp-route-id="@user.Id">
+
+					<button type="submit" class="btn btn-danger btn-lg ml-1"><i class="fa fa-times" aria-hidden="true"></i></button>
+
+				</form>
+			</div>
+		</div>
+	}
+</div>

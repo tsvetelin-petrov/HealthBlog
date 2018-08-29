@@ -1,0 +1,18 @@
+﻿@using HealthBlog.Common.Trainers.BindingModels
+
+@model AddDayToProgramBindingModel
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<div class="input-group mt-4">
+	<div class="input-group-prepend">
+		<label asp-for="@Model.ProgramId" class="input-group-text"></label>
+	</div>
+	<select asp-for="@Model.ProgramId" class="custom-select">
+		@foreach (var program in Model.Programs)
+		{
+			<option value="@program.Id">@program.Name</option>
+		}
+	</select>
+	<a asp-action="@ActionConstants.Create" asp-controller="@ControllerConstants.Programs" asp-area="@RolesConstants.Trainer" class="btn btn-primary" asp-route-redirectUrl="@Context.Request.Path">Създай нова</a>
+</div>

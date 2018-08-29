@@ -1,0 +1,18 @@
+﻿@model TrainingCreateBindingModel
+
+<h3 class="text-center m-3">Създай тренировка</h3>
+
+@using (Html.BeginForm(FormMethod.Post))
+{
+	@Html.EditorForModel();
+
+	<div class="mt-3">
+		<input type="submit" class="btn btn-success" value="Създай" />
+		<a asp-action="@ActionConstants.Index" asp-controller="@ControllerConstants.Trainings" asp-area="" class="btn btn-light">Назад</a>
+	</div>
+}
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}
+

@@ -1,0 +1,35 @@
+﻿@model MealsIndexModel
+
+<h2 class="text-center m-3">Хранения</h2>
+
+@if (Model.Meals.Any())
+{
+	<a asp-page="@PageConstants.MealsCreate" class="btn btn-primary">Създай ново</a>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Име</th>
+				<th>Детайли</th>
+				<th>Действия</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var meal in Model.Meals)
+			{
+				<tr>
+					<td>@meal.Name</td>
+					<td>@meal.Description</td>
+					<td>
+						<a asp-page="@PageConstants.MealsDetails"
+						   asp-route-id="@meal.Id"
+						   class="btn btn-info">Детайли</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+else
+{
+	<div>Нямаш създадени упражнения. <a asp-page="@PageConstants.MealsCreate">Създай първото</a>.</div>
+}

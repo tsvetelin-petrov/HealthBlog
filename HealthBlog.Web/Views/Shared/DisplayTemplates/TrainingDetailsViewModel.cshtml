@@ -1,0 +1,17 @@
+﻿@model TrainingDetailsViewModel
+
+<div class="text-center m-3">
+	<h3>@Model.Name</h3>
+	<h4>@Model.Type</h4>
+	<br />
+	@Model.Description
+</div>
+
+@if (Model.IsCreatedByCurrentUser)
+{
+	<partial name="_TrainingDetailsCreatedPartialView" model="Model" />
+}
+else
+{
+	<partial name="_TrainingDetailsBoughtPartialView" model="Model" />
+}

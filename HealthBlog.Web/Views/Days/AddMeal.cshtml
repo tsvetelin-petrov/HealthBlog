@@ -1,0 +1,17 @@
+﻿@model AddMealToDayModel
+
+<h2 class="text-center">Добавяне хранене към ден</h2>
+
+<form method="post" asp-action="@ActionConstants.AddMeal" asp-controller="@ControllerConstants.Days" asp-area="" asp-route-dayId="@this.ViewData["id"]">
+	
+	@Html.EditorForModel()
+
+	<div class="mt-3">
+		<input type="submit" class="btn btn-success" value="Добави" />
+		<a asp-action="@ActionConstants.Details" asp-controller="@ControllerConstants.Days" asp-area="" asp-route-id="@this.ViewData["id"]" class="btn btn-light">Назад</a>
+	</div>
+</form>
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}

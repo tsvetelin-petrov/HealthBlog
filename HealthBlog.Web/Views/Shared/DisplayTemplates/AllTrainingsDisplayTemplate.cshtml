@@ -1,0 +1,36 @@
+﻿@model IEnumerable<AllTrainingsViewModel>
+
+<h2 class="text-center m-3">Тренировки</h2>
+
+@if (!Model.Any())
+{
+	<div>Нямаш създадени тренировки. <a asp-action="@ActionConstants.Create" asp-controller="@ControllerConstants.Trainings">Създай първата</a>.</div>
+}
+else
+{
+	<a asp-action="Create" asp-controller="Trainings" class="btn btn-primary">Създай нова</a>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Име</th>
+				<th>Вид</th>
+				<th>Брой упражнениия</th>
+				<th>Действия</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			@foreach (var training in Model)
+			{
+				<tr>
+					<td>@training.Name</td>
+					<td>@training.Type</td>
+					<td>@training.ExerciseCount</td>
+					<td>
+						<a asp-action="@ActionConstants.Details" asp-controller="@ControllerConstants.Trainings" asp-area="" asp-route-id="@training.Id" class="btn btn-info">Детайли</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

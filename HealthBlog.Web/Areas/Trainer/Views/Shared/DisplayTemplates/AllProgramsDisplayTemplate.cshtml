@@ -1,0 +1,43 @@
+﻿@model IEnumerable<AllProgramsViewModel>
+
+<h3 class="text-center m-3">Програми</h3>
+
+<a asp-action="@ActionConstants.Create"
+   asp-controller="@ControllerConstants.Programs"
+   asp-area="@RolesConstants.Trainer"
+   class="btn btn-primary">Създай нова</a>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Име</th>
+			<th>Тип</th>
+			<th>Дни</th>
+			<th>Действия</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var program in Model)
+		{
+			<tr>
+				<td>@program.Name</td>
+				<td>@program.Type</td>
+				<td>@program.DaysCount</td>
+				<td>
+					<a asp-action="@ActionConstants.Details" 
+					   asp-controller="@ControllerConstants.Programs"
+					   asp-area="" 
+					   asp-route-id="@program.Id" 
+					   class="btn btn-info mr-1">Детайли</a>
+					@if (!program.IsForSale)
+					{
+						<a asp-action="@ActionConstants.Sell" 
+						   asp-controller="@ControllerConstants.Programs"
+						   asp-area="@RolesConstants.Trainer" 
+						   asp-route-id="@program.Id" 
+						   class="btn btn-primary if-1">Продай</a>
+					}
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

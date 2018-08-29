@@ -1,0 +1,19 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+<div class="jumbotron mt-3" style="background: none;">
+	@if (!SignInManager.IsSignedIn(User))
+	{
+		<h1>Добре дошли в Health Blog.</h1>
+		<h2>Сайтът, който ти помага да организираш целия си ден.</h2>
+		<hr />
+		<h3>
+			<a asp-area="Identity" asp-page="/Account/Login">Влез</a> в профила си или се
+			<a asp-area="Identity" asp-page="/Account/Register">Регистрирай</a> ако нямаш такъв
+		</h3>
+	}
+	else
+	{
+		<h1>Добре дошъл, @User.Identity.Name!</h1>
+		<h2>Приятно прекарване в сайта.</h2>
+	}
+</div>

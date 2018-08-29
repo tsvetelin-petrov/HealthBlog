@@ -1,0 +1,45 @@
+﻿@using HealthBlog.Common.Users.ViewModels
+
+@model IEnumerable<AllDaysViewModel>
+
+<h5 class="text-center m-3">Дни</h5>
+
+@if (!Model.Any())
+{
+	<div>Програмата няма добавени дни.</div>
+}
+else
+{
+	<table class="table table-striped table-responsive-md">
+		<thead>
+			<tr>
+				<th>Брой тренировки</th>
+				<th>Брой хранения</th>
+				<th>Действия</th>
+			</tr>
+		</thead>
+		<tbody>
+
+			@foreach (var day in Model)
+			{
+				<tr>
+					<td>@day.TrainingsCount</td>
+					<td>@day.MealsCount</td>
+					<td>
+						<div class="btn-group">
+							<a asp-action="@ActionConstants.Details" asp-controller="@ControllerConstants.Days" asp-area="" asp-route-id="@day.Id" class="btn btn-info mr-1">Детайли</a>
+							<form asp-action="@ActionConstants.DeleteDay"
+								  asp-controller="@ControllerConstants.Programs"
+								  asp-area="@RolesConstants.Trainer"
+								  method="post"
+								  asp-route-dayId="@day.Id"
+								  asp-route-programId="@ViewBag.programId">
+								<input type="submit" value="Премахни" class="btn btn-danger" />
+							</form>
+						</div>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}

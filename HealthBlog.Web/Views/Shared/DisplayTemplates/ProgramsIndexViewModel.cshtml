@@ -1,0 +1,36 @@
+﻿@model ICollection<ProgramsIndexViewModel>
+
+<h2 class="text-center m-3">Програми</h2>
+
+<a asp-area="" 
+   asp-controller="@ControllerConstants.Programs" 
+   asp-action="@ActionConstants.Search" 
+   class="btn btn-primary">
+	Купи програма
+</a>
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Име</th>
+			<th>Тип</th>
+			<th>Автор</th>
+			<th>Брой дни</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var program in Model)
+		{
+			<tr>
+				<td>
+					<a asp-area=""
+					   asp-controller="@ControllerConstants.Programs"
+					   asp-action="@ActionConstants.Details"
+					   asp-route-id="@program.Id">@program.Name</a>
+				</td>
+				<td>@program.Type</td>
+				<td>@program.Author</td>
+				<td>@program.DaysCount</td>
+			</tr>
+		}
+	</tbody>
+</table>
