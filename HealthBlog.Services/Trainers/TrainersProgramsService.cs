@@ -13,6 +13,7 @@
 	using HealthBlog.Models;
 	using HealthBlog.Common.Trainers.ViewModels;
 	using HealthBlog.Common.Exceptions;
+	using Microsoft.AspNetCore.Mvc.Rendering;
 
 	public class TrainersProgramsService : BaseProgramService, ITrainersProgramsService
 	{
@@ -51,17 +52,17 @@
 			await this.DbContext.SaveChangesAsync();
 		}
 
-		public async Task<IEnumerable<ProgramsForAddingViewModel>> GetAllProgramsForAdding(string username)
+		public async Task<IEnumerable<SelectListItem>> GetAllProgramsForAdding(string username)
 		{
 			var userId = (await this.GetUserByNamedAsync(username))?.Id;
 
 			var programs = 
-				this.Mapper.Map<IEnumerable<ProgramsForAddingViewModel>>(
 					(await this.DbContext.Users
 						.Include(u => u.CreatedPrograms)
 						.FirstAsync(u => u.Id == userId))
 							.CreatedPrograms
-							.Where(p => p.Name != defaultUserProgramName));
+							.Where(p => p.Name != defaultUserProgramName)
+							.Select(cp => new SelectListItem(cp.Name, cp.Id.ToString()));
 
 			return programs;
 		}

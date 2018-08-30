@@ -328,3 +328,5 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+HealthBlog.Web/appsettings.json
+HealthBlog.Web/appsettings.Development.json

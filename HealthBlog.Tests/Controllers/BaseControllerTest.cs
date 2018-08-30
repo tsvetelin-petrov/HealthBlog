@@ -6,7 +6,7 @@ using System.Security.Claims;
 namespace HealthBlog.Tests.Controllers
 {
 	[TestClass]
-	public abstract class BaseControllerTest
+	public abstract class BaseControllerTestsClass
 	{
 		protected ControllerContext controllerContext;
 

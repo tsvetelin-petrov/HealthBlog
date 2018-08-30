@@ -6,11 +6,6 @@
 	<div class="input-group-prepend">
 		<label asp-for="@Model.Id" class="input-group-text"></label>
 	</div>
-	<select asp-for="@Model.Id" class="custom-select">
-		@foreach (var training in Model.Trainings)
-		{
-			<option value="@training.Id">@training.Name</option>
-		}
-	</select>
+	<select asp-for="@Model.Id" asp-items="@Model.Trainings" class="custom-select"></select>
 	<a asp-action="@ActionConstants.Create" asp-controller="@ControllerConstants.Trainings" asp-area="" class="btn btn-primary" asp-route-redirectUrl="@Context.Request.Path">Създай нова</a>
 </div>

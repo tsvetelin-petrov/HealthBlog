@@ -9,12 +9,13 @@
 	using HealthBlog.Common.Trainers.BindingModels;
 	using HealthBlog.Services.Trainers.Contracts;
 	using HealthBlog.Common.Constants;
+	using HealthBlog.Common.Users.BindingModels;
 
 	[Authorize]
 	public class DaysController : Controller
 	{
 		private const string alreadyAddedTraining = "Tренировката вече е добавена.";
-		private const string alreadyAddedMeal = "Хрененето вече е добавена.";
+		private const string alreadyAddedMeal = "Хрененето вече е добавено.";
 
 		private readonly IDaysService daysService;
 		private readonly ITrainingsService trainingsService;
@@ -55,15 +56,7 @@
 		[HttpGet]
 		public async Task<IActionResult> AddTraining(int id)
 		{
-			AddTrainingToDayModel model = null;
-			try
-			{
-				model = await this.daysService.GetDayTrainingsByIdAsync(id, this.User.Identity.Name);
-			}
-			catch (Exception)
-			{
-				return this.RedirectToAction(ActionConstants.Index, ControllerConstants.Days);
-			}
+			AddTrainingToDayModel model = await this.daysService.GetDayTrainingsByIdAsync(id, this.User.Identity.Name);
 
 			this.ViewData["id"] = id;
 
@@ -90,15 +83,7 @@
 		[HttpGet]
 		public async Task<IActionResult> AddMeal(int id)
 		{
-			AddMealToDayModel model = null;
-			try
-			{
-				model = await this.daysService.GetDayMealsByIdAsync(id, this.User.Identity.Name);
-			}
-			catch (Exception)
-			{
-				return this.RedirectToAction(ActionConstants.Index, ControllerConstants.Days);
-			}
+			AddMealToDayModel model = await this.daysService.GetDayMealsByIdAsync(id, this.User.Identity.Name);
 
 			this.ViewData["id"] = id;
 
@@ -116,7 +101,7 @@
 			{
 				this.ModelState.AddModelError(string.Empty, alreadyAddedMeal);
 
-				return await this.AddTraining(dayId);
+				return await this.AddMeal(dayId);
 			}
 
 			return this.RedirectToAction(ActionConstants.Details, ControllerConstants.Days, new { id = dayId });

@@ -1,19 +1,18 @@
 ﻿namespace HealthBlog.Common.Trainers.BindingModels
 {
+	using Microsoft.AspNetCore.Mvc.Rendering;
 	using System.Collections.Generic;
 	using System.ComponentModel.DataAnnotations;
 
-	using ViewModels;
+	using Constants;
 
 	public class AddDayToProgramBindingModel
 	{
-		private const string programDisplayName = "Програма";
-
 		public int DayId { get; set; }
 
-		[Display(Name = programDisplayName)]
+		[Display(Name = AttributeDisplayNameConstants.Program)]
 		public int ProgramId { get; set; }
 
-		public IEnumerable<ProgramsForAddingViewModel> Programs { get; set; }
+		public IEnumerable<SelectListItem> Programs { get; set; }
 	}
 }

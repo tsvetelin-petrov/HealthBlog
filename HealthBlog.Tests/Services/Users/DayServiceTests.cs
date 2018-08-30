@@ -208,7 +208,7 @@ namespace HealthBlog.Tests.Services.Users
 			var userManager = MockUserManager.GetUserManager(dbContext);
 
 			var mockUserProgramService = new Mock<IUserProgramsService>();
-			mockUserProgramService.Setup(opt => opt.GetOrCreateDefaulttUserProgram(MockUserManager.testUserId))
+			mockUserProgramService.Setup(opt => opt.GetDefaulttUserProgram(MockUserManager.testUserId))
 				.ReturnsAsync(this.GetOrCreateTestProgram);
 
 			var mockTrainerProgramService = new Mock<ITrainersProgramsService>();

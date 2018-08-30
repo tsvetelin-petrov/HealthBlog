@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using HealthBlog.Common.Trainers.BindingModels;
+using HealthBlog.Common.Users.BindingModels;
 using HealthBlog.Common.Users.ViewModels;
 using HealthBlog.Models;
 

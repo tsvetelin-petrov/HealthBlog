@@ -1,4 +1,4 @@
-﻿using HealthBlog.Common.Users.BindingModels;
+﻿using HealthBlog.Common.Trainers.BindingModels;
 using System.Threading.Tasks;
 
 namespace HealthBlog.Services.Contracts

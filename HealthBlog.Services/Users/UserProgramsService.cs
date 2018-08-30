@@ -13,6 +13,7 @@
 	using HealthBlog.Models;
 	using HealthBlog.Common.Exceptions;
 	using HealthBlog.Common.Users.BindingModels;
+	using HealthBlog.Common.Trainers.BindingModels;
 
 	public class UserProgramsService : BaseProgramService, IUserProgramsService
 	{
@@ -171,7 +172,7 @@
 
 
 
-		public async Task<Program> GetOrCreateDefaulttUserProgram(string userId)
+		public async Task<Program> GetDefaulttUserProgram(string userId)
 		{
 			var user = await this.UserManager.FindByIdAsync(userId);
 
@@ -182,13 +183,13 @@
 
 			if (program == null)
 			{
-				var defaultCreateModel = new ProgramCreateBindingModel()
+				await this.CreateProgramAsync(new ProgramCreateBindingModel()
 				{
 					Name = defaultUserProgramName,
 					Type = defaultUserProgramType,
 					Description = defaultUserProgramDescription
-				};
-				await this.CreateProgramAsync(defaultCreateModel, user.UserName);
+				},
+				user.UserName);
 			}
 			return program;
 		}

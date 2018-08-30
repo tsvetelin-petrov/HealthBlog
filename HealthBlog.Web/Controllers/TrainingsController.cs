@@ -81,11 +81,6 @@
 		[ServiceFilter(typeof(TrainingCreatorFilter))]
 		public async Task<IActionResult> AddExercise(int id, TrainingExerciseModel model)
 		{
-			if (!this.ModelState.IsValid)
-			{
-				return this.View();
-			}
-
 			try
 			{
 				await this.trainingsService.AddExerciseToTrainingAsync(model.Input, id, this.User.Identity.Name);

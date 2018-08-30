@@ -15,6 +15,7 @@
 	using HealthBlog.Common.Trainers.BindingModels;
 	using HealthBlog.Common.Exceptions;
 	using HealthBlog.Services.Trainers.Contracts;
+	using Microsoft.AspNetCore.Mvc.Rendering;
 
 	public class DaysService : BaseEFService, IDaysService
 	{
@@ -43,7 +44,7 @@
 		{
 			var user = await this.GetUserByNamedAsync(username);
 
-			var program = await this.userProgramsService.GetOrCreateDefaulttUserProgram(user.Id);
+			var program = await this.userProgramsService.GetDefaulttUserProgram(user.Id);
 
 			var day = new Day()
 			{
@@ -65,7 +66,7 @@
 		{
 			var userId = (await this.GetUserByNamedAsync(username))?.Id;
 
-			var defaultProgramId = (await this.userProgramsService.GetOrCreateDefaulttUserProgram(userId)).Id;
+			var defaultProgramId = (await this.userProgramsService.GetDefaulttUserProgram(userId)).Id;
 
 			var ownedProgramIds = (await this.DbContext.Users
 				.Include(u => u.OwnedPrograms)
@@ -92,7 +93,7 @@
 		{
 			var user = await this.GetUserByNamedAsync(username);
 
-			var defaultDays = (await this.userProgramsService.GetOrCreateDefaulttUserProgram(user.Id)).Days;
+			var defaultDays = (await this.userProgramsService.GetDefaulttUserProgram(user.Id)).Days;
 
 			var days = this.Mapper.Map<IEnumerable<AllDaysViewModel>>(
 				await this.DbContext.Days
@@ -123,11 +124,11 @@
 		{
 			var day = await this.GetDayAsync(dayId, username);
 
-			var training = await this.mealsService.GetMealAsync(mealId, username);
+			var meal = await this.mealsService.GetMealAsync(mealId, username);
 
 			day.Meals.Add(new MealDay()
 			{
-				Meal = training,
+				Meal = meal,
 			});
 
 			await this.DbContext.SaveChangesAsync();
@@ -137,7 +138,7 @@
 		{
 			var user = await this.GetUserByNamedAsync(username);
 
-			var defaultProgram = await this.userProgramsService.GetOrCreateDefaulttUserProgram(user.Id);
+			var defaultProgram = await this.userProgramsService.GetDefaulttUserProgram(user.Id);
 
 			var day = defaultProgram.Days
 					.FirstOrDefault(d => d.DayId == id)?
@@ -158,7 +159,7 @@
 			var model = new AddTrainingToDayModel()
 			{
 				Id = dayId,
-				Trainings = this.Mapper.Map<IEnumerable<AddTrainingToDayBindingModel>>(trainings)
+				Trainings = trainings.Select(t => new SelectListItem(t.Name, t.Id.ToString()))
 			};
 
 			return model;
@@ -171,7 +172,7 @@
 			var model = new AddMealToDayModel()
 			{
 				Id = id,
-				Meals = this.Mapper.Map<IEnumerable<AddMealToDayBindingModel>>(meals)
+				Meals = meals.Select(m => new SelectListItem(m.Name, m.Id.ToString()))
 			};
 
 			return model;
@@ -235,7 +236,7 @@
 
 			var programs = (await this.trainersProgramsService.GetAllProgramsForAdding(username))
 				.Where(p => !day.Programs
-					.Any(dp => dp.ProgramId == p.Id));
+					.Any(dp => dp.ProgramId == int.Parse(p.Value)));
 
 			var model = new AddDayToProgramBindingModel()
 			{

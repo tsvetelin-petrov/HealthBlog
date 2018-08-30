@@ -1,7 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-
-namespace HealthBlog.Models
+﻿namespace HealthBlog.Models
 {
 	public class UserProgram
     {

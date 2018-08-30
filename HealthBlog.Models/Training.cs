@@ -14,10 +14,15 @@
 		public int Id { get; set; }
 
 		[Required]
+		[StringLength(30, MinimumLength = 2)]
 		public string Name { get; set; }
 
+		[Required]
+		[StringLength(30, MinimumLength = 2)]
 		public string Type { get; set; }
 
+		[Required]
+		[StringLength(200, MinimumLength = 2)]
 		public string Description { get; set; }
 
 		public string UserId { get; set; }

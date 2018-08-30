@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace HealthBlog.Tests.Controllers.Users
 {
 	[TestClass]
-	public class DaysControllerTests : BaseControllerTest
+	public class DaysControllerTests : BaseControllerTestsClass
 	{
 		[TestMethod]
 		public async Task Create_WithoutParameters_ShouldCallService()
@@ -44,20 +44,8 @@ namespace HealthBlog.Tests.Controllers.Users
 		[TestMethod]
 		public async Task Create_WithoutParameters_ShouldReturnRedirectToActionResult()
 		{
-			var mockDaysService = new Mock<IDaysService>();
-			mockDaysService
-				.Setup(opt => opt.CreateDayAsync(It.IsAny<string>()))
-				.ReturnsAsync(() => 0);
-			var mockTrainngsService = new Mock<ITrainingsService>();
-			var mockTrainerProgramsService = new Mock<ITrainersProgramsService>();
 
-			var controller = new DaysController(
-				mockDaysService.Object,
-				mockTrainngsService.Object,
-				mockTrainerProgramsService.Object)
-			{
-				ControllerContext = this.controllerContext
-			};
+			var controller = this.GetDaysController();
 
 			var result = await controller.Create();
 
@@ -66,6 +54,16 @@ namespace HealthBlog.Tests.Controllers.Users
 
 		[TestMethod]
 		public async Task Create_WithoutParameters_ShouldRedirectToCorrectAction()
+		{
+			DaysController controller = GetDaysController();
+
+			var result = await controller.Create();
+
+			Assert.AreEqual(ActionConstants.Details, ((RedirectToActionResult)result).ActionName);
+			Assert.AreEqual(ControllerConstants.Days, ((RedirectToActionResult)result).ControllerName);
+		}
+
+		private DaysController GetDaysController()
 		{
 			var mockDaysService = new Mock<IDaysService>();
 			mockDaysService
@@ -82,10 +80,7 @@ namespace HealthBlog.Tests.Controllers.Users
 				ControllerContext = this.controllerContext
 			};
 
-			var result = await controller.Create();
-
-			Assert.AreEqual(ActionConstants.Details, ((RedirectToActionResult)result).ActionName);
-			Assert.AreEqual(ControllerConstants.Days, ((RedirectToActionResult)result).ControllerName);
+			return controller;
 		}
 	}
 }

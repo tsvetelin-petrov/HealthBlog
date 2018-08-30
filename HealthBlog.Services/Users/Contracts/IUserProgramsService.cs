@@ -16,6 +16,6 @@
 
 		Task<ProgramDetailsViewModel> GetProgramDetailsAsync(string name, int id);
 
-		Task<Program> GetOrCreateDefaulttUserProgram(string userId);
+		Task<Program> GetDefaulttUserProgram(string userId);
 	}
 }

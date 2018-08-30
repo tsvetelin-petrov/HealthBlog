@@ -7,6 +7,7 @@
 	using HealthBlog.Common.Trainers.ViewModels;
 	using HealthBlog.Models;
 	using HealthBlog.Services.Contracts;
+	using Microsoft.AspNetCore.Mvc.Rendering;
 
 	public interface ITrainersProgramsService : ICreateProgram
 	{
@@ -20,7 +21,7 @@
 
 		Task<bool> IsCreatorUserAsync(string username, int id);
 
-		Task<IEnumerable<ProgramsForAddingViewModel>> GetAllProgramsForAdding(string username);
+		Task<IEnumerable<SelectListItem>> GetAllProgramsForAdding(string username);
 
 		Task<ProgramSellBindingModel> GetProgramForSelling(int id, string username);
 	}

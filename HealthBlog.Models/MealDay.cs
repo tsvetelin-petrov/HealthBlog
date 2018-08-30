@@ -9,7 +9,5 @@
 
 		public int DayId { get; set; }
 		public Day Day { get; set; }
-
-		public DateTime MealTime { get; set; }
 	}
 }

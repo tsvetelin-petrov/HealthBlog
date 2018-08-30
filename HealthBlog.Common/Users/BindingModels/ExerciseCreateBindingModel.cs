@@ -1,16 +1,24 @@
 ﻿namespace HealthBlog.Common.Users.BindingModels
 {
 	using System.ComponentModel.DataAnnotations;
+
+	using Constants;
+
 	public class ExerciseCreateBindingModel
     {
 		[Required]
-		[Display(Name = "Име")]
+		[StringLength(30, MinimumLength = 2)]
+		[Display(Name = AttributeDisplayNameConstants.Name)]
 		public string Name { get; set; }
 
-		[Display(Name = "Мускулна група")]
+		[Required]
+		[StringLength(30, MinimumLength = 2)]
+		[Display(Name = AttributeDisplayNameConstants.TargetMuscle)]
 		public string TargetMuscle { get; set; }
 
-		[Display(Name = "Описание")]
+		[Required]
+		[StringLength(30, MinimumLength = 2)]
+		[Display(Name = AttributeDisplayNameConstants.Description)]
 		public string Description { get; set; }
 	}
 }

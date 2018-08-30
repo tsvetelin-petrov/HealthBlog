@@ -4,14 +4,16 @@ using HealthBlog.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace HealthBlog.Data.Migrations
 {
     [DbContext(typeof(HealthBlogDbContext))]
-    partial class HealthBlogDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180830095706_AddedModelValidations")]
+    partial class AddedModelValidations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

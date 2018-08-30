@@ -15,12 +15,15 @@
 		public int Id { get; set; }
 
 		[Required]
+		[StringLength(30, MinimumLength = 2)]
 		public string Name { get; set; }
 
 		[Required]
+		[StringLength(30, MinimumLength = 2)]
 		public string Type { get; set; }
 
 		[Required]
+		[StringLength(100, MinimumLength = 2)]
 		public string Description { get; set; }
 
 		public string AuthorId { get; set; }

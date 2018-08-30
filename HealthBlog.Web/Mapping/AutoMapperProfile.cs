@@ -66,7 +66,6 @@
 			this.CreateMap<ProgramCreateBindingModel, Program>();
 			this.CreateMap<Program, ProgramDetailsViewModel>()
 				.ForMember(vm => vm.IsCreatedByCurrentUser, opt => opt.Ignore());
-			this.CreateMap<Program, ProgramsForAddingViewModel>();
 			this.CreateMap<ProgramDay, AllDaysViewModel>()
 				.ForMember(vm => vm.Id, opt => opt.MapFrom(pd => pd.DayId))
 				.ForMember(vm => vm.MealsCount, opt => opt.MapFrom(pd => pd.Day.Meals.Count))
@@ -101,8 +100,6 @@
 			this.CreateMap<Day, AllDaysViewModel>()
 				.ForMember(vm => vm.TrainingsCount, opt => opt.MapFrom(pd => pd.Trainings.Count))
 				.ForMember(vm => vm.MealsCount, opt => opt.MapFrom(pd => pd.Meals.Count));
-			this.CreateMap<Training, AddTrainingToDayBindingModel>();
-			this.CreateMap<Meal, AddMealToDayBindingModel>();
 		}
 	}
 }

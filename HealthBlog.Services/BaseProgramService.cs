@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoMapper;
+using HealthBlog.Common.Trainers.BindingModels;
 using HealthBlog.Common.Users.BindingModels;
 using HealthBlog.Data;
 using HealthBlog.Models;
