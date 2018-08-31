@@ -83,6 +83,11 @@
 					.ThenInclude(md => md.Meal)
 				.FirstOrDefaultAsync(pd => pd.DayId == id && (pd.ProgramId == defaultProgramId || ownedProgramIds.Any(opId => opId == pd.ProgramId)));
 
+			if (defaultprogramDay == null)
+			{
+				throw new InvalidDayException();
+			}
+
 			var model = this.Mapper.Map<DayDetailsViewModel>(defaultprogramDay);
 			model.IsCreatedByCurrentUser = defaultprogramDay.Day.Author.UserName == username;
 

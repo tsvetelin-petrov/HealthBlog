@@ -1,9 +1,6 @@
 ﻿namespace HealthBlog.Web.Controllers
 {
-	using System.Diagnostics;
 	using Microsoft.AspNetCore.Mvc;
-
-	using HealthBlog.Common.Users.ViewModels;
 
 	public class HomeController : Controller
     {
@@ -18,13 +15,17 @@
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error(string message = null)
+        public IActionResult Error()
         {
+			string message = 
+				this.TempData.ContainsKey("Message") 
+				? this.TempData["Message"].ToString() : null;
+
 			this.ViewData["message"] = string.IsNullOrWhiteSpace(message)
 				? "Unhadled"
 				: message;
 
-            return View();
+			return View();
         }
     }
 }

@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using System;
 using System.Collections.Generic;
 
@@ -15,9 +17,8 @@ namespace HealthBlog.Tests.Filters
 	public class OnExceptionTests
 	{
 		[TestMethod]
-		public void OnException_WhitCustomExcepton_ShouldReturnRedirectResultWithMessage()
+		public void OnException_WhitCustomExcepton_ShouldReturnRedirectResultAndAddMessageToTempData()
 		{
-
 			var context = new ExceptionContext(
 							new ActionContext(
 								new DefaultHttpContext(),
@@ -28,16 +29,25 @@ namespace HealthBlog.Tests.Filters
 				Exception = new CertificateUploadTimesException()
 			};
 
-			var exceptionFilter = new GlobalExceptionFilter();
+			var mockTempDataFactory = new Mock<ITempDataDictionaryFactory>();
+			var mockTempData = new Mock<ITempDataDictionary>();
+			bool isCalled = false;
+			mockTempData
+				.Setup(opt => opt.Add(It.IsAny<string>(), It.IsAny<object>()))
+				.Callback(() => isCalled = true);
+			mockTempDataFactory
+				.Setup(opt => opt.GetTempData(It.IsAny<HttpContext>()))
+				.Returns(mockTempData.Object);
+			var exceptionFilter = new GlobalExceptionFilter(mockTempDataFactory.Object);
 
 			exceptionFilter.OnException(context);
 
 			Assert.IsTrue(context.Result is RedirectResult);
-			Assert.IsTrue(((RedirectResult)context.Result).Url.EndsWith(context.Exception.Message));
+			Assert.IsTrue(isCalled);
 		}
 
 		[TestMethod]
-		public void OnException_WhitCustomExcepton_ShouldReturnRedirectResultWithoutMessage()
+		public void OnException_WhitCustomExcepton_ShouldReturnRedirectResultWithoutMessageInTempData()
 		{
 
 			var context = new ExceptionContext(
@@ -50,12 +60,21 @@ namespace HealthBlog.Tests.Filters
 				Exception = new Exception()
 			};
 
-			var exceptionFilter = new GlobalExceptionFilter();
+			var mockTempDataFactory = new Mock<ITempDataDictionaryFactory>();
+			var mockTempData = new Mock<ITempDataDictionary>();
+			bool isCalled = false;
+			mockTempData
+				.Setup(opt => opt.Add(It.IsAny<string>(), It.IsAny<object>()))
+				.Callback(() => isCalled = true);
+			mockTempDataFactory
+				.Setup(opt => opt.GetTempData(It.IsAny<HttpContext>()))
+				.Returns(mockTempData.Object);
+			var exceptionFilter = new GlobalExceptionFilter(mockTempDataFactory.Object);
 
 			exceptionFilter.OnException(context);
 
 			Assert.IsTrue(context.Result is RedirectResult);
-			Assert.IsFalse(((RedirectResult)context.Result).Url.EndsWith(context.Exception.Message));
+			Assert.IsFalse(isCalled);
 		}
 	}
 }

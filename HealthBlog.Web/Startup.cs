@@ -12,17 +12,17 @@
 	using Microsoft.Extensions.Configuration;
 	using Microsoft.Extensions.DependencyInjection;
 
-	using Common;
-	using HealthBlog.Services.Users;
-	using HealthBlog.Services.Users.Contracts;
-	using HealthBlog.Services.Trainers;
-	using HealthBlog.Services.Trainers.Contracts;
-	using HealthBlog.Models;
-	using HealthBlog.Data;
-	using Services;
 	using Filters;
+	using HealthBlog.Data;
+	using HealthBlog.Models;
 	using HealthBlog.Services.Admins.Contracts;
 	using HealthBlog.Services.Admins;
+	using HealthBlog.Services.Trainers;
+	using HealthBlog.Services.Trainers.Contracts;
+	using HealthBlog.Services.Users;
+	using HealthBlog.Services.Users.Contracts;
+	using Services;
+
 
 	public class Startup
 	{
@@ -86,6 +86,7 @@
 			services.AddMvc(options =>
 				{
 					options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+					options.Filters.Add<GlobalExceptionFilter>();
 				})
 				.SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 		}
@@ -125,14 +126,14 @@
 		private void RegisterGlobalServices(IServiceCollection services)
 		{
 			services.AddSingleton<IEmailSender>(new SendGridEmailService(Configuration.GetSection("SendGrid:ApiKey").Value));
-			services.AddTransient<IExercisesService, ExercisesService>();
-			services.AddTransient<ITrainingsService, TrainingsService>();
-			services.AddTransient<IMealsService, MealsService>();
-			services.AddTransient<IDaysService, DaysService>();
-			services.AddTransient<ITrainersProgramsService, TrainersProgramsService>();
-			services.AddTransient<IUserProgramsService, UserProgramsService>();
-			services.AddTransient<ITrainerValidationService, TrainerValidationService>();
-			services.AddTransient<IMakeTrainersService, MakeTrainersService>();
+			services.AddScoped<IExercisesService, ExercisesService>();
+			services.AddScoped<ITrainingsService, TrainingsService>();
+			services.AddScoped<IMealsService, MealsService>();
+			services.AddScoped<IDaysService, DaysService>();
+			services.AddScoped<ITrainersProgramsService, TrainersProgramsService>();
+			services.AddScoped<IUserProgramsService, UserProgramsService>();
+			services.AddScoped<ITrainerValidationService, TrainerValidationService>();
+			services.AddScoped<IMakeTrainersService, MakeTrainersService>();
 
 			services.AddTransient<TrainingCreatorFilter>();
 			services.AddTransient<TrainerProgramCreatorFilter>();

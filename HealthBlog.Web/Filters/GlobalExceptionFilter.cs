@@ -3,19 +3,27 @@
 	using HealthBlog.Common.Exceptions;
 	using Microsoft.AspNetCore.Mvc;
 	using Microsoft.AspNetCore.Mvc.Filters;
+	using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 	public class GlobalExceptionFilter : IExceptionFilter
 	{
+		private readonly ITempDataDictionaryFactory tempDataFactory;
+
+		public GlobalExceptionFilter(ITempDataDictionaryFactory tempDataFactory)
+		{
+			this.tempDataFactory = tempDataFactory;
+		}
+
 		public void OnException(ExceptionContext context)
 		{
+			var tempData = tempDataFactory.GetTempData(context.HttpContext);
+
 			if (context.Exception is HealthBlogBaseException)
 			{
-				context.Result = new RedirectResult($"/Home/Error?message={context.Exception.Message}");
+				tempData.Add("Message", context.Exception.Message);
 			}
-			else
-			{
-				context.Result = new RedirectResult($"/Home/Error");
-			}
+
+			context.Result = new RedirectResult("/Home/Error");
 		}
 	}
 }
