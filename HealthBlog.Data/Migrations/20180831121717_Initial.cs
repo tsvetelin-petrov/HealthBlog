@@ -26,23 +26,26 @@ namespace HealthBlog.Data.Migrations
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
                     Id = table.Column<string>(nullable: false),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
                     PasswordHash = table.Column<string>(nullable: true),
                     SecurityStamp = table.Column<string>(nullable: true),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
                     PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    AccessFailedCount = table.Column<int>(nullable: false),
                     FullName = table.Column<string>(nullable: true),
-                    ImageUrl = table.Column<string>(nullable: true)
+                    ImageUrl = table.Column<string>(nullable: true),
+                    CertificatePath = table.Column<string>(nullable: true),
+                    IsResponded = table.Column<bool>(nullable: false),
+                    CertificateUploadTimes = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -161,16 +164,14 @@ namespace HealthBlog.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Date = table.Column<DateTime>(nullable: false),
-                    UserId = table.Column<string>(nullable: true),
-                    WaterToDrink = table.Column<double>(nullable: false)
+                    AuthorId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Days", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Days_AspNetUsers_UserId",
-                        column: x => x.UserId,
+                        name: "FK_Days_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
@@ -182,9 +183,9 @@ namespace HealthBlog.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: true),
-                    TargetMuscle = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 30, nullable: false),
+                    TargetMuscle = table.Column<string>(maxLength: 30, nullable: false),
+                    Description = table.Column<string>(maxLength: 100, nullable: false),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -204,8 +205,8 @@ namespace HealthBlog.Data.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 30, nullable: false),
+                    Description = table.Column<string>(maxLength: 100, nullable: false),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -220,14 +221,38 @@ namespace HealthBlog.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Programs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(maxLength: 30, nullable: false),
+                    Type = table.Column<string>(maxLength: 30, nullable: false),
+                    Description = table.Column<string>(maxLength: 100, nullable: false),
+                    AuthorId = table.Column<string>(nullable: true),
+                    IsForSale = table.Column<bool>(nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Programs", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Programs_AspNetUsers_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Trainings",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(nullable: false),
-                    Type = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(maxLength: 30, nullable: false),
+                    Type = table.Column<string>(maxLength: 30, nullable: false),
+                    Description = table.Column<string>(maxLength: 200, nullable: false),
                     UserId = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -246,8 +271,7 @@ namespace HealthBlog.Data.Migrations
                 columns: table => new
                 {
                     MealId = table.Column<int>(nullable: false),
-                    DayId = table.Column<int>(nullable: false),
-                    MealTime = table.Column<DateTime>(nullable: false)
+                    DayId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -267,13 +291,59 @@ namespace HealthBlog.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProgramDays",
+                columns: table => new
+                {
+                    ProgramId = table.Column<int>(nullable: false),
+                    DayId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProgramDays", x => new { x.DayId, x.ProgramId });
+                    table.ForeignKey(
+                        name: "FK_ProgramDays_Days_DayId",
+                        column: x => x.DayId,
+                        principalTable: "Days",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ProgramDays_Programs_ProgramId",
+                        column: x => x.ProgramId,
+                        principalTable: "Programs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserPrograms",
+                columns: table => new
+                {
+                    UserId = table.Column<string>(nullable: false),
+                    ProgramId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserPrograms", x => new { x.UserId, x.ProgramId });
+                    table.ForeignKey(
+                        name: "FK_UserPrograms_Programs_ProgramId",
+                        column: x => x.ProgramId,
+                        principalTable: "Programs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserPrograms_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TrainingDays",
                 columns: table => new
                 {
                     TrainingId = table.Column<int>(nullable: false),
-                    DayId = table.Column<int>(nullable: false),
-                    TrainingTime = table.Column<DateTime>(nullable: false),
-                    IsComplited = table.Column<bool>(nullable: false)
+                    DayId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -358,15 +428,9 @@ namespace HealthBlog.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Days_Date",
+                name: "IX_Days_AuthorId",
                 table: "Days",
-                column: "Date",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Days_UserId",
-                table: "Days",
-                column: "UserId");
+                column: "AuthorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Exercises_UserId",
@@ -384,6 +448,16 @@ namespace HealthBlog.Data.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProgramDays_ProgramId",
+                table: "ProgramDays",
+                column: "ProgramId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Programs_AuthorId",
+                table: "Programs",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TrainingDays_TrainingId",
                 table: "TrainingDays",
                 column: "TrainingId");
@@ -397,6 +471,11 @@ namespace HealthBlog.Data.Migrations
                 name: "IX_Trainings_UserId",
                 table: "Trainings",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserPrograms_ProgramId",
+                table: "UserPrograms",
+                column: "ProgramId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -420,10 +499,16 @@ namespace HealthBlog.Data.Migrations
                 name: "MealDays");
 
             migrationBuilder.DropTable(
+                name: "ProgramDays");
+
+            migrationBuilder.DropTable(
                 name: "TrainingDays");
 
             migrationBuilder.DropTable(
                 name: "TrainingExercises");
+
+            migrationBuilder.DropTable(
+                name: "UserPrograms");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
@@ -439,6 +524,9 @@ namespace HealthBlog.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Trainings");
+
+            migrationBuilder.DropTable(
+                name: "Programs");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

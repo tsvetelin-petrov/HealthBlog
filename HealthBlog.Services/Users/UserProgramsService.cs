@@ -76,20 +76,18 @@
 
 		public async Task BuyProgramAsync(int programId, string username)
 		{
-			var userId = (await this.GetUserByNamedAsync(username)).Id;
+			var user = await this.GetUserByNamedAsync(username);
 
-			if (!await this.IsValidProgram(programId, userId))
+			if (!await this.IsValidProgram(programId, user.Id))
 			{
-				throw new Common.Exceptions.InvalidProgramException();
+				throw new InvalidProgramException();
 			}
 
-			(await this.DbContext.Users
-				.FirstOrDefaultAsync(u => u.Id == userId))
-					.OwnedPrograms
-					.Add(new UserProgram()
-					{
-						ProgramId = programId
-					});
+			user.OwnedPrograms
+				.Add(new UserProgram()
+				{
+					ProgramId = programId
+				});
 
 			await this.DbContext.SaveChangesAsync();
 		}
@@ -176,12 +174,8 @@
 		{
 			var user = await this.UserManager.FindByIdAsync(userId);
 
-			var program = await this.DbContext.Programs
-				.Include(p => p.Days)
-				.ThenInclude(pd => pd.Day)
-				.FirstOrDefaultAsync(p => p.AuthorId == userId && p.Name == defaultUserProgramName);
-
-			if (program == null)
+			if (!await this.DbContext.Programs
+				.AnyAsync(p => p.AuthorId == userId && p.Name == defaultUserProgramName))
 			{
 				await this.CreateProgramAsync(new ProgramCreateBindingModel()
 				{
@@ -191,6 +185,11 @@
 				},
 				user.UserName);
 			}
+			var program = await this.DbContext.Programs
+				.Include(p => p.Days)
+				.ThenInclude(pd => pd.Day)
+				.FirstOrDefaultAsync(p => p.AuthorId == userId && p.Name == defaultUserProgramName);
+
 			return program;
 		}
 	}

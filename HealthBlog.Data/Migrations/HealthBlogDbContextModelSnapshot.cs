@@ -262,17 +262,13 @@ namespace HealthBlog.Data.Migrations
 
             modelBuilder.Entity("HealthBlog.Models.UserProgram", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<string>("UserId");
 
                     b.Property<int>("ProgramId");
-
-                    b.Property<string>("UserId1");
 
                     b.HasKey("UserId", "ProgramId");
 
                     b.HasIndex("ProgramId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserPrograms");
                 });
@@ -483,7 +479,8 @@ namespace HealthBlog.Data.Migrations
 
                     b.HasOne("HealthBlog.Models.User", "User")
                         .WithMany("OwnedPrograms")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

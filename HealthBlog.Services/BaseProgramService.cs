@@ -16,9 +16,9 @@ namespace HealthBlog.Services
 		protected const string defaultUserProgramDescription = "%^_default_program_description_^%";
 
 		protected BaseProgramService(
-			HealthBlogDbContext dbContext, 
+			HealthBlogDbContext dbContext,
 			IMapper mapper,
-			UserManager<User> userManager) 
+			UserManager<User> userManager)
 			: base(dbContext, mapper, userManager)
 		{
 		}
@@ -30,8 +30,6 @@ namespace HealthBlog.Services
 			var program = this.Mapper.Map<Program>(model);
 			program.AuthorId = user.Id;
 			user.CreatedPrograms.Add(program);
-			await this.DbContext.SaveChangesAsync();
-
 			await this.DbContext.SaveChangesAsync();
 		}
 	}

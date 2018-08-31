@@ -139,5 +139,8 @@
 			services.AddTransient<TrainerProgramCreatorFilter>();
 			services.AddTransient<DayCreatorFilter>();
 		}
+
+		//TODO: Add constants for length!
+		//TODO: Breake logic in smaller pieces.
 	}
 }

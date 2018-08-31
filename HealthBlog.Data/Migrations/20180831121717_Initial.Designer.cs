@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HealthBlog.Data.Migrations
 {
     [DbContext(typeof(HealthBlogDbContext))]
-    [Migration("20180813113208_ProgramPriceChanges")]
-    partial class ProgramPriceChanges
+    [Migration("20180831121717_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
+                .HasAnnotation("ProductVersion", "2.1.2-rtm-30932")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -27,20 +27,11 @@ namespace HealthBlog.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date");
-
-                    b.Property<string>("ProgramId");
-
-                    b.Property<int?>("ProgramId1");
-
-                    b.Property<double>("WaterToDrink");
+                    b.Property<string>("AuthorId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Date")
-                        .IsUnique();
-
-                    b.HasIndex("ProgramId1");
+                    b.HasIndex("AuthorId");
 
                     b.ToTable("Days");
                 });
@@ -51,13 +42,17 @@ namespace HealthBlog.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<string>("Name")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<string>("TargetMuscle")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<string>("UserId");
 
@@ -74,10 +69,13 @@ namespace HealthBlog.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<string>("Name")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<string>("UserId");
 
@@ -94,8 +92,6 @@ namespace HealthBlog.Data.Migrations
 
                     b.Property<int>("MealId");
 
-                    b.Property<DateTime>("MealTime");
-
                     b.HasKey("DayId", "MealId");
 
                     b.HasIndex("MealId");
@@ -109,24 +105,43 @@ namespace HealthBlog.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("DurationInDays");
+                    b.Property<string>("AuthorId");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(100);
 
                     b.Property<bool>("IsForSale");
 
                     b.Property<string>("Name")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("StartDate");
-
                     b.Property<string>("Type")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AuthorId");
+
                     b.ToTable("Programs");
+                });
+
+            modelBuilder.Entity("HealthBlog.Models.ProgramDay", b =>
+                {
+                    b.Property<int>("DayId");
+
+                    b.Property<int>("ProgramId");
+
+                    b.HasKey("DayId", "ProgramId");
+
+                    b.HasIndex("ProgramId");
+
+                    b.ToTable("ProgramDays");
                 });
 
             modelBuilder.Entity("HealthBlog.Models.Training", b =>
@@ -135,12 +150,17 @@ namespace HealthBlog.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200);
 
                     b.Property<string>("Name")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasMaxLength(30);
 
-                    b.Property<string>("Type");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(30);
 
                     b.Property<string>("UserId");
 
@@ -156,10 +176,6 @@ namespace HealthBlog.Data.Migrations
                     b.Property<int>("DayId");
 
                     b.Property<int>("TrainingId");
-
-                    b.Property<bool>("IsComplited");
-
-                    b.Property<DateTime>("TrainingTime");
 
                     b.HasKey("DayId", "TrainingId");
 
@@ -192,7 +208,9 @@ namespace HealthBlog.Data.Migrations
 
                     b.Property<int>("AccessFailedCount");
 
-                    b.Property<string>("CertificateUrl");
+                    b.Property<string>("CertificatePath");
+
+                    b.Property<int>("CertificateUploadTimes");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
@@ -206,7 +224,7 @@ namespace HealthBlog.Data.Migrations
 
                     b.Property<string>("ImageUrl");
 
-                    b.Property<bool>("IsTrainer");
+                    b.Property<bool>("IsResponded");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -246,17 +264,13 @@ namespace HealthBlog.Data.Migrations
 
             modelBuilder.Entity("HealthBlog.Models.UserProgram", b =>
                 {
-                    b.Property<int>("UserId");
+                    b.Property<string>("UserId");
 
                     b.Property<int>("ProgramId");
-
-                    b.Property<string>("UserId1");
 
                     b.HasKey("UserId", "ProgramId");
 
                     b.HasIndex("ProgramId");
-
-                    b.HasIndex("UserId1");
 
                     b.ToTable("UserPrograms");
                 });
@@ -373,9 +387,9 @@ namespace HealthBlog.Data.Migrations
 
             modelBuilder.Entity("HealthBlog.Models.Day", b =>
                 {
-                    b.HasOne("HealthBlog.Models.Program", "Program")
-                        .WithMany("Days")
-                        .HasForeignKey("ProgramId1");
+                    b.HasOne("HealthBlog.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
                 });
 
             modelBuilder.Entity("HealthBlog.Models.Exercise", b =>
@@ -402,6 +416,26 @@ namespace HealthBlog.Data.Migrations
                     b.HasOne("HealthBlog.Models.Meal", "Meal")
                         .WithMany("Days")
                         .HasForeignKey("MealId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("HealthBlog.Models.Program", b =>
+                {
+                    b.HasOne("HealthBlog.Models.User", "Author")
+                        .WithMany("CreatedPrograms")
+                        .HasForeignKey("AuthorId");
+                });
+
+            modelBuilder.Entity("HealthBlog.Models.ProgramDay", b =>
+                {
+                    b.HasOne("HealthBlog.Models.Day", "Day")
+                        .WithMany("Programs")
+                        .HasForeignKey("DayId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("HealthBlog.Models.Program", "Program")
+                        .WithMany("Days")
+                        .HasForeignKey("ProgramId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -446,8 +480,9 @@ namespace HealthBlog.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("HealthBlog.Models.User", "User")
-                        .WithMany("Programs")
-                        .HasForeignKey("UserId1");
+                        .WithMany("OwnedPrograms")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
