@@ -14,6 +14,7 @@
 	using HealthBlog.Common.Trainers.ViewModels;
 	using HealthBlog.Common.Exceptions;
 	using Microsoft.AspNetCore.Mvc.Rendering;
+	using HealthBlog.Common;
 
 	public class TrainersProgramsService : BaseProgramService, ITrainersProgramsService
 	{
@@ -28,24 +29,18 @@
 		public async Task DeleteDayAsync(int dayId, int programId, string username)
 		{
 			var program = await this.GetProgramByIdAsync(programId, username);
-
 			var programDay = await this.DbContext.ProgramDays
 				.FirstOrDefaultAsync(pd => pd.DayId == dayId && pd.ProgramId == programId);
 
-			if (programDay == null)
-			{
-				throw new InvalidProgramDayException();
-			}
+			CoreValidator.ThrowIfNull(programDay, new InvalidProgramDayException());
 
 			this.DbContext.ProgramDays.Remove(programDay);
-
 			await this.DbContext.SaveChangesAsync();
 		}
 
 		public async Task SellProgramAsync(int id, ProgramSellBindingModel model, string username)
 		{
 			var program = await this.GetProgramByIdAsync(id, username);
-
 			program.IsForSale = true;
 			program.Price = model.Price;
 
@@ -77,10 +72,7 @@
 					.CreatedPrograms
 					.FirstOrDefault(p => p.Id == programId);
 
-			if (program == null)
-			{
-				throw new InvalidProgramException();
-			}
+			CoreValidator.ThrowIfNull(program, new InvalidProgramException());
 
 			return program;
 		}

@@ -2,6 +2,7 @@
 {
 	using AutoMapper;
 	using Microsoft.AspNetCore.Identity;
+	using Microsoft.EntityFrameworkCore;
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
@@ -11,9 +12,8 @@
 	using HealthBlog.Common.Users.ViewModels;
 	using HealthBlog.Data;
 	using HealthBlog.Models;
-	using Microsoft.EntityFrameworkCore;
-	using System;
 	using HealthBlog.Common.Exceptions;
+	using HealthBlog.Common;
 
 	public class ExercisesService : BaseEFService, IExercisesService
 	{
@@ -30,24 +30,18 @@
 
 		public async Task CreateExerciseAsync(ExerciseCreateBindingModel model, string username)
 		{
-			if (model == null)
-			{
-				throw new ArgumentNullException();
-			}
+			CoreValidator.ThrowIfNull(model);
 
 			var user = await this.GetUserByNamedAsync(username);
-
 			var exercise = this.Mapper.Map<Exercise>(model);
 
 			user.Exercises.Add(exercise);
-
 			await this.DbContext.SaveChangesAsync();
 		}
 
 		public async Task<IEnumerable<AllExercisesViewModel>> GetAllExercisesAsync(string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var exercises = this.Mapper.Map<IEnumerable<AllExercisesViewModel>>(
 				this.DbContext.Exercises
 					.Where(e => e.UserId == user.Id));
@@ -58,7 +52,6 @@
 		public async Task<ExerciseDetailsViewModel> GetExerciseDetailsAsync(int id, string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var exercise = this.Mapper.Map<ExerciseDetailsViewModel>(await this.DbContext.Exercises
 				.FirstOrDefaultAsync(e => e.Id == id && e.UserId == user.Id));
 
@@ -68,11 +61,9 @@
 		public async Task DeleteExerciseAsync(int id, string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var exercise = await this.GetExerciseAsync(id, user.Id);
 
 			this.DbContext.Exercises.Remove(exercise);
-
 			await this.DbContext.SaveChangesAsync();
 		}
 
@@ -80,10 +71,7 @@
 		{
 			var exercise = await this.DbContext.Exercises.FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
-			if (exercise == null)
-			{
-				throw new InvalidExerciseException();
-			}
+			CoreValidator.ThrowIfNull(exercise, new InvalidExerciseException());
 
 			return exercise;
 		}

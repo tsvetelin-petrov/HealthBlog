@@ -7,12 +7,12 @@
 	public class MealCreateBindingModel
     {
 		[Required]
-		[StringLength(30, MinimumLength = 2)]
+		[StringLength(ModelsLengthConstants.NameMaxLength, MinimumLength = ModelsLengthConstants.NameMinLength)]
 		[Display(Name = AttributeDisplayNameConstants.Name)]
 		public string Name { get; set; }
 
 		[Required]
-		[StringLength(30, MinimumLength = 2)]
+		[StringLength(ModelsLengthConstants.TrainingDescriptionMaxLength, MinimumLength = ModelsLengthConstants.DescriptionMinLength)]
 		[Display(Name = AttributeDisplayNameConstants.Description)]
 		public string Description { get; set; }
 	}

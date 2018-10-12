@@ -1,5 +1,6 @@
 ﻿namespace HealthBlog.Models
 {
+	using HealthBlog.Common.Constants;
 	using System.Collections.Generic;
 	using System.ComponentModel.DataAnnotations;
 
@@ -13,11 +14,11 @@
 		public int Id { get; set; }
 
 		[Required]
-		[StringLength(30, MinimumLength = 2)]
+		[StringLength(ModelsLengthConstants.NameMaxLength, MinimumLength = ModelsLengthConstants.NameMinLength)]
 		public string Name { get; set; }
 
 		[Required]
-		[StringLength(100, MinimumLength = 2)]
+		[StringLength(ModelsLengthConstants.DescriptionMaxLength, MinimumLength = ModelsLengthConstants.DescriptionMinLength)]
 		public string Description { get; set; }
 
 		public string UserId { get; set; }

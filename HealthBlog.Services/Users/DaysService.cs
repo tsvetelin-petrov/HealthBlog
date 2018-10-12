@@ -16,6 +16,7 @@
 	using HealthBlog.Common.Exceptions;
 	using HealthBlog.Services.Trainers.Contracts;
 	using Microsoft.AspNetCore.Mvc.Rendering;
+	using HealthBlog.Common;
 
 	public class DaysService : BaseEFService, IDaysService
 	{
@@ -43,9 +44,7 @@
 		public async Task<int> CreateDayAsync(string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var program = await this.userProgramsService.GetDefaulttUserProgram(user.Id);
-
 			var day = new Day()
 			{
 				AuthorId = user.Id
@@ -56,9 +55,7 @@
 			{
 				Day = day
 			});
-
 			await this.DbContext.SaveChangesAsync();
-
 			return day.Id;
 		}
 
@@ -81,12 +78,13 @@
 					.ThenInclude(td => td.Training)
 				.Include(pd => pd.Day.Meals)
 					.ThenInclude(md => md.Meal)
-				.FirstOrDefaultAsync(pd => pd.DayId == id && (pd.ProgramId == defaultProgramId || ownedProgramIds.Any(opId => opId == pd.ProgramId)));
+				.FirstOrDefaultAsync(pd =>
+					pd.DayId == id &&
+					(pd.ProgramId == defaultProgramId ||
+						ownedProgramIds
+							.Any(opId => opId == pd.ProgramId)));
 
-			if (defaultprogramDay == null)
-			{
-				throw new InvalidDayException();
-			}
+			CoreValidator.ThrowIfNull(defaultprogramDay, new InvalidDayException());
 
 			var model = this.Mapper.Map<DayDetailsViewModel>(defaultprogramDay);
 			model.IsCreatedByCurrentUser = defaultprogramDay.Day.Author.UserName == username;
@@ -97,9 +95,7 @@
 		public async Task<IEnumerable<AllDaysViewModel>> GetAllDaysAsync(string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var defaultDays = (await this.userProgramsService.GetDefaulttUserProgram(user.Id)).Days;
-
 			var days = this.Mapper.Map<IEnumerable<AllDaysViewModel>>(
 				await this.DbContext.Days
 					.Where(d => defaultDays
@@ -114,9 +110,7 @@
 		public async Task AddTrainingToDayAsync(int dayId, int trainingId, string username)
 		{
 			var day = await this.GetDayAsync(dayId, username);
-
 			var training = await this.trainingsService.GetTrainingAsync(trainingId, username);
-
 			day.Trainings.Add(new TrainingDay()
 			{
 				Training = training,
@@ -128,9 +122,7 @@
 		public async Task AddMealToDayAsync(int dayId, int mealId, string username)
 		{
 			var day = await this.GetDayAsync(dayId, username);
-
 			var meal = await this.mealsService.GetMealAsync(mealId, username);
-
 			day.Meals.Add(new MealDay()
 			{
 				Meal = meal,
@@ -142,17 +134,12 @@
 		public async Task<Day> GetDayAsync(int id, string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var defaultProgram = await this.userProgramsService.GetDefaulttUserProgram(user.Id);
-
 			var day = defaultProgram.Days
 					.FirstOrDefault(d => d.DayId == id)?
 					.Day;
 
-			if (day == null)
-			{
-				throw new InvalidDayException();
-			}
+			CoreValidator.ThrowIfNull(day, new InvalidDayException());
 
 			return day;
 		}
@@ -160,7 +147,6 @@
 		public async Task<AddTrainingToDayModel> GetDayTrainingsByIdAsync(int dayId, string username)
 		{
 			var trainings = await this.trainingsService.GetAllUserTrainingsAsync(username);
-
 			var model = new AddTrainingToDayModel()
 			{
 				Id = dayId,
@@ -173,7 +159,6 @@
 		public async Task<AddMealToDayModel> GetDayMealsByIdAsync(int id, string username)
 		{
 			var meals = await this.mealsService.GetAllUserMealsAsync(username);
-
 			var model = new AddMealToDayModel()
 			{
 				Id = id,
@@ -186,50 +171,33 @@
 		public async Task RemoveTrainingFromDayAsync(int dayId, int trainingId, string username)
 		{
 			var day = await this.GetDayAsync(dayId, username);
-
 			var training = await this.trainingsService.GetTrainingAsync(trainingId, username);
-
 			var trainingDay = this.DbContext.TrainingDays
 				.FirstOrDefault(td => td.TrainingId == trainingId && td.DayId == dayId);
 
-			if (trainingDay != null)
-			{
-				day.Trainings.Remove(trainingDay);
+			CoreValidator.ThrowIfNull(trainingDay, new InvalidTrainingDayException());
 
-				await this.DbContext.SaveChangesAsync();
-			}
-			else
-			{
-				throw new InvalidTrainingDayException();
-			}
+			day.Trainings.Remove(trainingDay);
+			await this.DbContext.SaveChangesAsync();
 		}
 
 		public async Task RemoveMealFromDayAsync(int dayId, int mealId, string username)
 		{
 			var day = await this.GetDayAsync(dayId, username);
-
 			var meal = await this.mealsService.GetMealAsync(mealId, username);
-
 			var mealDay = await this.DbContext.MealDays
 				.FirstOrDefaultAsync(md => md.MealId == meal.Id && md.DayId == day.Id);
 
-			if (meal != null)
-			{
-				day.Meals.Remove(mealDay);
-				await this.DbContext.SaveChangesAsync();
-			}
-			else
-			{
-				throw new InvalidMealDayException();
-			}
+			CoreValidator.ThrowIfNull(meal, new InvalidMealDayException());
+
+			day.Meals.Remove(mealDay);
+			await this.DbContext.SaveChangesAsync();
 		}
 
 		public async Task DeleteDayAsync(int dayId, string username)
 		{
 			var day = await this.GetDayAsync(dayId, username);
-
 			this.DbContext.Days.Remove(day);
-
 			await this.DbContext.SaveChangesAsync();
 		}
 
@@ -255,7 +223,6 @@
 		public async Task AddDayToProgramAsync(int programId, int dayId, string username)
 		{
 			var day = await this.GetDayAsync(dayId, username);
-
 			var program = await this.trainersProgramsService.GetProgramByIdAsync(programId, username);
 
 			this.DbContext.ProgramDays.Add(new ProgramDay()
@@ -263,7 +230,6 @@
 				ProgramId = programId,
 				DayId = dayId
 			});
-
 			await this.DbContext.SaveChangesAsync();
 		}
 

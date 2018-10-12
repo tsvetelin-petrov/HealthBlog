@@ -14,9 +14,12 @@
 	using HealthBlog.Common.Exceptions;
 	using HealthBlog.Common.Users.BindingModels;
 	using HealthBlog.Common.Trainers.BindingModels;
+	using HealthBlog.Common;
 
 	public class UserProgramsService : BaseProgramService, IUserProgramsService
 	{
+		private const string ownedName = "Вие";
+
 		public UserProgramsService(
 			HealthBlogDbContext dbContext,
 			IMapper mapper,
@@ -88,14 +91,7 @@
 				{
 					ProgramId = programId
 				});
-
 			await this.DbContext.SaveChangesAsync();
-		}
-
-		private async Task<bool> IsValidProgram(int programId, string userId)
-		{
-			return await this.DbContext.Programs
-				.AnyAsync(p => p.Id == programId && p.AuthorId != userId);
 		}
 
 		public async Task<ICollection<ProgramsIndexViewModel>> GetOwnedAndCreatedProgramsAsync(string username)
@@ -111,16 +107,12 @@
 						.ThenInclude(p => p.Days)
 				.FirstOrDefaultAsync(p => p.UserName == username));
 
-			if (user == null)
-			{
-				throw new InvalidUserException();
-			}
+			CoreValidator.ThrowIfNull(user, new InvalidUserException());
 
 			var model = this.Mapper.Map<List<ProgramsIndexViewModel>>(
 				user.CreatedPrograms
 					.Where(p => p.Name != defaultUserProgramName));
-
-			model.ForEach(m => m.Author = "Вие");
+			model.ForEach(m => m.Author = ownedName);
 
 			model.AddRange(
 				this.Mapper.Map<IEnumerable<ProgramsIndexViewModel>>(
@@ -157,18 +149,13 @@
 				.Include(u => u.OwnedPrograms)
 				.FirstOrDefaultAsync(u => u.UserName == username));
 
-			if (user == null)
-			{
-				throw new InvalidUserException();
-			}
+			CoreValidator.ThrowIfNull(user, new InvalidUserException());
 
 			bool isCreatedProgram = user.CreatedPrograms.Any(p => p.Id == programId);
 			bool isOwnedProgram = user.OwnedPrograms.Any(p => p.ProgramId == programId);
 
 			return isOwnedProgram || isCreatedProgram;
 		}
-
-
 
 		public async Task<Program> GetDefaulttUserProgram(string userId)
 		{
@@ -185,12 +172,19 @@
 				},
 				user.UserName);
 			}
+
 			var program = await this.DbContext.Programs
 				.Include(p => p.Days)
 				.ThenInclude(pd => pd.Day)
 				.FirstOrDefaultAsync(p => p.AuthorId == userId && p.Name == defaultUserProgramName);
 
 			return program;
+		}
+
+		private async Task<bool> IsValidProgram(int programId, string userId)
+		{
+			return await this.DbContext.Programs
+				.AnyAsync(p => p.Id == programId && p.AuthorId != userId);
 		}
 	}
 }

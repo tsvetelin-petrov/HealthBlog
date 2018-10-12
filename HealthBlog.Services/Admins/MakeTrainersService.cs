@@ -49,14 +49,9 @@
 		{
 			var user = await this.UserManager.FindByIdAsync(userId);
 
-			if (File.Exists(user.CertificatePath))
-			{
-				File.Delete(user.CertificatePath);
-			}
-			else
-			{
-				throw new InvalidCertificateException();
-			}
+			if (File.Exists(user.CertificatePath)) File.Delete(user.CertificatePath);
+			else throw new InvalidCertificateException();
+
 			user.IsResponded = false;
 			user.CertificatePath = string.Empty;
 			await this.DbContext.SaveChangesAsync();

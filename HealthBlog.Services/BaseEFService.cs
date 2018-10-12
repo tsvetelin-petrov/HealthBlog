@@ -8,6 +8,7 @@
 	using Data;
 	using HealthBlog.Models;
 	using HealthBlog.Common.Exceptions;
+	using HealthBlog.Common;
 
 	public abstract class BaseEFService
     {
@@ -31,10 +32,7 @@
 		{
 			var user = await this.UserManager.FindByNameAsync(name);
 
-			if (user == null)
-			{
-				throw new InvalidUserException();
-			}
+			CoreValidator.ThrowIfNull(user, new InvalidUserException());
 
 			return user;
 		}

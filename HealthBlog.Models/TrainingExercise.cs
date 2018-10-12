@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HealthBlog.Common.Constants;
+using System.ComponentModel.DataAnnotations;
 
 namespace HealthBlog.Models
 {
@@ -11,11 +12,11 @@ namespace HealthBlog.Models
 		public Exercise Exercise { get; set; }
 
 		[Required]
-		[Range(1, 100)]
+		[Range(ModelsLengthConstants.SeriesMinCount, ModelsLengthConstants.SeriesMaxCount)]
 		public int SeriesCount { get; set; }
 
 		[Required]
-		[Range(1, 100)]
+		[Range(ModelsLengthConstants.RepetitionMinCount, ModelsLengthConstants.RepetitionMaxCount)]
 		public int RepetitionCount { get; set; }
 	}
 }

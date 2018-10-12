@@ -2,18 +2,18 @@
 {
 	using AutoMapper;
 	using Microsoft.AspNetCore.Identity;
-	using System;
+	using Microsoft.EntityFrameworkCore;
+	using System.Collections.Generic;
 	using System.Linq;
 	using System.Threading.Tasks;
 
 	using Contracts;
+	using HealthBlog.Common;
+	using HealthBlog.Common.Exceptions;
 	using HealthBlog.Common.Users.BindingModels;
 	using HealthBlog.Common.Users.ViewModels;
 	using HealthBlog.Data;
 	using HealthBlog.Models;
-	using System.Collections.Generic;
-	using Microsoft.EntityFrameworkCore;
-	using HealthBlog.Common.Exceptions;
 
 	public class TrainingsService : BaseEFService, ITrainingsService
 	{
@@ -31,18 +31,13 @@
 
 		public async Task<int> CreateTrainingAsync(TrainingCreateBindingModel model, string username)
 		{
-			if (model == null)
-			{
-				throw new ArgumentNullException();
-			}
+			CoreValidator.ThrowIfNull(model);
 
 			var user = await this.GetUserByNamedAsync(username);
-
 			var training = this.Mapper.Map<Training>(model);
 			training.UserId = user.Id;
 
 			this.DbContext.Trainings.Add(training);
-
 			await this.DbContext.SaveChangesAsync();
 
 			return training.Id;
@@ -50,13 +45,9 @@
 
 		public async Task AddExerciseToTrainingAsync(TrainingExerciseInput model, int id, string username)
 		{
-			if (model == null)
-			{
-				throw new ArgumentNullException();
-			}
+			CoreValidator.ThrowIfNull(model);
 
 			var user = await this.GetUserByNamedAsync(username);
-
 			var training = await this.GetTrainingAsync(id, username);
 
 			if (!this.DbContext.Exercises
@@ -129,44 +120,33 @@
 			};
 
 			trainingExercise.Exercises = await this.exercisesService.GetAllExercisesAsync(username);
-
 			return trainingExercise;
 		}
 
 		public async Task DeleteTrainingAsync(int exerciseId, int trainingId, string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var trainingExercise = this.DbContext.TrainingExercises
 				.FirstOrDefault(te => te.ExerciseId == exerciseId && te.TrainingId == trainingId);
 
-			if (trainingExercise == null)
-			{
-				throw new InvalidTrainingExerciseException();
-			}
+			CoreValidator.ThrowIfNull(trainingExercise, new InvalidTrainingExerciseException());
 
 			this.DbContext.TrainingExercises
 				.Remove(trainingExercise);
-
 			await this.DbContext.SaveChangesAsync();
 		}
 
 		public async Task<Training> GetTrainingAsync(int id, string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var training = await this.DbContext.Trainings.FirstOrDefaultAsync(t => t.Id == id);
 
-			if (training == null)
-			{
-				throw new InvalidTrainingException();
-			}
+			CoreValidator.ThrowIfNull(training, new InvalidTrainingException());
 
 			if (!await this.IsValidTrainingAsync(id, username))
 			{
 				throw new InvalidTrainingException();
 			}
-
 
 			return training;
 		}
@@ -174,7 +154,6 @@
 		public async Task<IEnumerable<Training>> GetAllUserTrainingsAsync(string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var trainings = this.DbContext.Trainings
 					.Include(t => t.Exercises)
 					.Where(t => t.UserId == user.Id);

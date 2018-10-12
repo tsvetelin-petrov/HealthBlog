@@ -2,6 +2,9 @@
 {
 	using AutoMapper;
 	using Microsoft.AspNetCore.Identity;
+	using Microsoft.EntityFrameworkCore;
+	using System.Collections.Generic;
+	using System.Linq;
 	using System.Threading.Tasks;
 
 	using Contracts;
@@ -9,11 +12,8 @@
 	using HealthBlog.Data;
 	using HealthBlog.Models;
 	using HealthBlog.Common.Users.ViewModels;
-	using System.Collections.Generic;
-	using System.Linq;
-	using Microsoft.EntityFrameworkCore;
-	using System;
 	using HealthBlog.Common.Exceptions;
+	using HealthBlog.Common;
 
 	public class MealsService : BaseEFService, IMealsService
 	{
@@ -29,13 +29,9 @@
 		{
 			var user = await this.GetUserByNamedAsync(username);
 
-			if (model == null)
-			{
-				throw new ArgumentNullException();
-			}
+			CoreValidator.ThrowIfNull(model);
 
 			user.Meals.Add(this.Mapper.Map<Meal>(model));
-
 			await this.DbContext.SaveChangesAsync();
 		}
 
@@ -60,16 +56,11 @@
 		public async Task<Meal> GetMealAsync(int id, string username)
 		{
 			var user = await this.GetUserByNamedAsync(username);
-
 			var meal = await this.DbContext.Meals
 				.Include(m => m.User)
 				.FirstOrDefaultAsync(m => m.Id == id);
 
-			if (meal == null)
-			{
-				throw new InvalidMealException();
-			}
-
+			CoreValidator.ThrowIfNull(meal, new InvalidMealException());
 			if (!await this.IsValidMealAsync(id, username))
 			{
 				throw new ValidationMealException();
@@ -81,7 +72,6 @@
 		public async Task<MealDetailsViewModel> GetMealDetailsAsync(int id, string username)
 		{
 			var meal = await this.GetMealAsync(id, username);
-
 			var model = this.Mapper.Map<MealDetailsViewModel>(
 				meal);
 			model.IsCreatedByCurrentUser = meal.User.UserName == username;
